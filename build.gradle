@@ -1,0 +1,23 @@
+group 'jp.topse.swdev.bigdata'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+apply plugin: 'application'
+mainClassName = 'jp.topse.swdev.bigdata.blackjack.demo.Demo'
+// mainClassName = 'jp.topse.swdev.bigdata.blackjack.Competition'
+
+sourceCompatibility = 8
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile "org.mockito:mockito-core:2.+"
+
+    // https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable
+    compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.1'
+}
