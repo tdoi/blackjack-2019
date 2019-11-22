@@ -2,8 +2,9 @@ package jp.topse.swdev.bigdata.blackjack.topse31044;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class Player {
+public class PastPlayer {
 	/** プレーヤー名 */
 	private String name;
 	
@@ -17,7 +18,7 @@ public class Player {
 	 * コンストラクター
 	 * @param string
 	 */
-	public Player(String name) {
+	public PastPlayer(String name) {
 		this.name = name;
 		this.tefuda = new ArrayList<String>();
 	}
@@ -74,6 +75,10 @@ public class Player {
 	 */
 	public List<String> getTefuda() {
 		return tefuda;
+	}
+	
+	public List<String> getKokai() {
+		return tefuda.subList(0, 1);
 	}
 
 	/**
@@ -136,8 +141,58 @@ public class Player {
 		return sum;
 	}
 	
+	private String engToNum(String english) {
+		switch(english) {
+		case "ACE":
+			return "A";
+		case "TWO":
+			return "2";
+		case "THREE":
+			return "3";
+		case "FOUR":
+			return "4";
+		case "FIVE":
+			return "5";
+		case "SIX":
+			return "6";
+		case "SEVEN":
+			return "7";
+		case "EIGHT":
+			return "8";
+		case "NINE":
+			return "9";
+		case "TEN":
+			return "10";
+		case "JACK":
+			return "J";
+		case "QUEEN":
+			return "Q";
+		case "KING":
+			return "K";
+		default:
+			return "?";			
+		}
+	}
+	
+	public String getWinnerView() {
+		switch(winner) {
+		case 1:
+			return "won";
+		case -1:
+			return "lost";
+		default:
+			return "draw";
+		}
+	}
+	
 	@Override
 	public String toString() {
-		return "【" + (this.winner == 1 ? "★" : this.winner == 0 ? "☆" : "") + this.name + "(" + this.getSum() + ")】" + this.tefuda.toString(); 
+		return "【"
+				+ (this.winner == 1 ? "★" : this.winner == 0 ? "☆" : "") 
+				+ this.name
+				+ "(" 
+				+ this.getSum() 
+				+ ")】" 
+				+ this.tefuda.stream().map(elm -> engToNum(elm)).collect(Collectors.toList()).toString(); 
 	}
 }
