@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jp.topse.swdev.bigdata.blackjack.Card;
+
 public class PastPlayer {
 	/** プレーヤー名 */
 	private String name;
@@ -75,6 +77,10 @@ public class PastPlayer {
 	 */
 	public List<String> getTefuda() {
 		return tefuda;
+	}
+	
+	public List<Integer> getTefudaAsIndex() {
+		return tefuda.stream().map(elm -> Csv2Arff.isNullOrEmpty(elm) ? -1: Card.valueOf(elm).getIndex()).collect(Collectors.toList());
 	}
 	
 	public List<String> getKokai() {

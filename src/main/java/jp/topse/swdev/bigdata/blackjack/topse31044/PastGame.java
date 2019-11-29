@@ -3,7 +3,9 @@ package jp.topse.swdev.bigdata.blackjack.topse31044;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import jp.topse.swdev.bigdata.blackjack.Card;
 import jp.topse.swdev.bigdata.blackjack.Deck;
 import jp.topse.swdev.bigdata.blackjack.Game;
 
@@ -80,6 +82,10 @@ public class PastGame {
 				this.wingDiver.getKokai().get(0),
 				this.airRaider.getKokai().get(0),
 				this.fencer.getKokai().get(0));
+	}
+	
+	public List<Integer> getKokaiJohoAsIndex(){
+		return this.getKokaiJoho().stream().map(elm -> Card.valueOf(elm).getIndex()).collect(Collectors.toList());
 	}
 
 	/**
