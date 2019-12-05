@@ -5,14 +5,56 @@ import jp.topse.swdev.bigdata.blackjack.Result.Type;
 
 public class PastPlayer {
 	
-	/** プレーヤー名 */
+	/**x プレーヤー名 */
 	private String name = "";
 	
-	/** 勝敗 */
+	/**x 勝敗 */
 	private Type result = Type.LOSE;
 	
-	/** 手札 */
+	/**x 手札 */
 	private Card[] tefuda = new Card[5];
+
+	/**
+	 * 結果から列挙型を解析し、セット
+	 * @param result 結果
+	 */
+	public void parseResult(String result) {
+		try {
+			this.result = Type.valueOf(result);
+		} catch(Exception e) {
+			this.result = null;
+		}
+	}
+	
+	/**
+	 * 手札の1枚目を取得
+	 * @return カード
+	 */
+	public Card first() {
+		return this.cardAt(0);
+	}
+
+	/**
+	 * 手札の何番目かを取得
+	 * @param tefuda 何番目か
+	 * @return カード
+	 */
+	public Card cardAt(int index) {
+		return tefuda[index];
+	}
+
+	/**
+	 * カード名から列挙型を解析し、指定の位置にセット
+	 * @param index 位置
+	 * @param card カード名
+	 */
+	public void parseCardNameAt(int index, String card) {
+		try {
+			this.tefuda[index] = Card.valueOf(card);
+		} catch(Exception e) {
+			this.tefuda[index] = null;
+		}
+	}
 	
 
 	/**
@@ -34,38 +76,5 @@ public class PastPlayer {
 	 */
 	public Type getResult() {
 		return result;
-	}
-
-	/**
-	 * @param result the result to set
-	 */
-	public void parseResult(String result) {
-		try {
-			this.result = Type.valueOf(result);
-		} catch(Exception e) {
-			this.result = null;
-		}
-	}
-	
-	public Card first() {
-		return this.cardAt(0);
-	}
-
-	/**
-	 * @return the tefuda
-	 */
-	public Card cardAt(int index) {
-		return tefuda[index];
-	}
-
-	/**
-	 * @param tefuda the tefuda to set
-	 */
-	public void parseCardNameAt(int index, String card) {
-		try {
-			this.tefuda[index] = Card.valueOf(card);
-		} catch(Exception e) {
-			this.tefuda[index] = null;
-		}
 	}
 }

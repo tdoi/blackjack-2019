@@ -5,19 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PastGame {	
-	/** ディーラー(Dealer) */
+	/**x ディーラー(Dealer) */
 	private PastPlayer toadette;
 	
-	/** アリス(Aice) */
+	/**x アリス(Aice) */
 	private PastPlayer ranger;
 
-	/** ボブ(Bob) */
+	/**x ボブ(Bob) */
 	private PastPlayer wingDiver;
 	
-	/** チャーリー(Charlie) */
+	/**x チャーリー(Charlie) */
 	private PastPlayer airRaider;
 	
-	/** デーブ(Dave) */
+	/**x デーブ(Dave) */
 	private PastPlayer fencer;
 	
 	/**
@@ -31,7 +31,7 @@ public class PastGame {
 		String[] el = line.split(",");
 		
 		// ======================================
-		// ディーラー
+		//x ディーラー
 		// ======================================
 	    pg.toadette = new PastPlayer();
 	    pg.toadette.setName(el[0]);
@@ -42,7 +42,7 @@ public class PastGame {
 	    pg.toadette.parseCardNameAt(4, el[5]);
 
 		// ======================================
-		// プレイヤー
+		//x プレイヤー
 		// ======================================
 	    List<PastPlayer> bufPl = new ArrayList<>();
 	    for (int lp = 0; lp < 4; lp++) {
@@ -67,17 +67,22 @@ public class PastGame {
 	}
 	
 	/**
+	 * 各々のプレイヤーから見える状況を取得
+	 * @return
+	 */
+	public List<PastPlayerContext> getPlayerContexts(){
+		return Arrays.asList(
+				new PastPlayerContext(this.ranger, this),
+				new PastPlayerContext(this.wingDiver, this),
+				new PastPlayerContext(this.airRaider, this),
+				new PastPlayerContext(this.fencer, this));
+	}
+
+	/**
 	 * @return the toadette
 	 */
 	public PastPlayer getToadette() {
 		return toadette;
-	}
-
-	/**
-	 * @param toadette the toadette to set
-	 */
-	public void setToadette(PastPlayer toadette) {
-		this.toadette = toadette;
 	}
 
 	/**
@@ -88,24 +93,10 @@ public class PastGame {
 	}
 
 	/**
-	 * @param ranger the ranger to set
-	 */
-	public void setRanger(PastPlayer ranger) {
-		this.ranger = ranger;
-	}
-
-	/**
 	 * @return the wingDiver
 	 */
 	public PastPlayer getWingDiver() {
 		return wingDiver;
-	}
-
-	/**
-	 * @param wingDiver the wingDiver to set
-	 */
-	public void setWingDiver(PastPlayer wingDiver) {
-		this.wingDiver = wingDiver;
 	}
 
 	/**
@@ -116,31 +107,11 @@ public class PastGame {
 	}
 
 	/**
-	 * @param airRaider the airRaider to set
-	 */
-	public void setAirRaider(PastPlayer airRaider) {
-		this.airRaider = airRaider;
-	}
-
-	/**
 	 * @return the fencer
 	 */
 	public PastPlayer getFencer() {
 		return fencer;
 	}
 
-	/**
-	 * @param fencer the fencer to set
-	 */
-	public void setFencer(PastPlayer fencer) {
-		this.fencer = fencer;
-	}
-	
-	public List<PastPlayerContext> getPlayerContexts(){
-		return Arrays.asList(
-				new PastPlayerContext(this.ranger, this),
-				new PastPlayerContext(this.wingDiver, this),
-				new PastPlayerContext(this.airRaider, this),
-				new PastPlayerContext(this.fencer, this));
-	}
+
 }
