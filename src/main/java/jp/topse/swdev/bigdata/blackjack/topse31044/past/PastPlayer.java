@@ -1,6 +1,7 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
 import jp.topse.swdev.bigdata.blackjack.Card;
+import jp.topse.swdev.bigdata.blackjack.Result.Type;
 
 public class PastPlayer {
 	
@@ -8,7 +9,7 @@ public class PastPlayer {
 	private String name = "";
 	
 	/** 勝敗 */
-	private Result result = Result.LOSE;
+	private Type result = Type.LOSE;
 	
 	/** 手札 */
 	private Card[] tefuda = new Card[5];
@@ -31,7 +32,7 @@ public class PastPlayer {
 	/**
 	 * @return the result
 	 */
-	public Result getResult() {
+	public Type getResult() {
 		return result;
 	}
 
@@ -40,7 +41,7 @@ public class PastPlayer {
 	 */
 	public void parseResult(String result) {
 		try {
-			this.result = Result.valueOf(result);
+			this.result = Type.valueOf(result);
 		} catch(Exception e) {
 			this.result = null;
 		}
