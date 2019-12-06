@@ -47,8 +47,8 @@ public class Csv2Arff {
 			//x 構造化したものをARFFに変換
 			//x=====================
 			Instances data = new Instances("data1", Csv2Arff.getAttributes(), 0);
-			pastGames.forEach(elm -> {						
-				elm.getPlayerContexts().forEach(elm2 -> {				
+			pastGames.forEach(elm -> {
+				elm.getPlayerContexts().forEach(elm2 -> {						
 					double[] values = new double[data.numAttributes()];
 					values[0] = elm2.getThisFirst();
 					values[1] = elm2.getThisSecond();
@@ -61,6 +61,7 @@ public class Csv2Arff {
 					values[8] = elm2.getFourthPublic();
 					values[9] = elm2.getFifthPublic();
 					values[10] = data.attribute(10).indexOfValue(elm2.getResultInName());
+					data.setClassIndex(10); //x 評価基準
 					data.add(new SparseInstance(1.0, values));					
 				});
 			});	
