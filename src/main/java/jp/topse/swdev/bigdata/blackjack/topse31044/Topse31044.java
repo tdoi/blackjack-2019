@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 import jp.topse.swdev.bigdata.blackjack.Action;
+import jp.topse.swdev.bigdata.blackjack.Card;
 import jp.topse.swdev.bigdata.blackjack.DecisionMaker;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
@@ -12,6 +13,8 @@ import jp.topse.swdev.bigdata.blackjack.Result.Type;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model.Models;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff;
+import jp.topse.swdev.bigdata.blackjack.topse31044.past.PastGame;
+import jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -27,23 +30,25 @@ import weka.core.SparseInstance;
 public class Topse31044 implements DecisionMaker {
 	
 	private enum Weight{
-		ACE(62008),
-		TWO(94047),
-		THREE(94770),
-		FOUR(94416),
-		FIVE(93877),
-		SIX(94639),
-		SEVEN(94470),
-		EIGHT(62222),
-		NINE(61768),
-		TEN(61953),
-		JACK(61828),
-		QUEEN(61789),
-		KING(62213);
+		ACE(Card.ACE, 62008),
+		TWO(Card.TWO, 94047),
+		THREE(Card.THREE, 94770),
+		FOUR(Card.FOUR, 94416),
+		FIVE(Card.FIVE, 93877),
+		SIX(Card.SIX, 94639),
+		SEVEN(Card.SEVEN, 94470),
+		EIGHT(Card.EIGHT, 62222),
+		NINE(Card.NINE, 61768),
+		TEN(Card.TEN, 61953),
+		JACK(Card.JACK, 61828),
+		QUEEN(Card.QUEEN, 61789),
+		KING(Card.KING, 62213);
 		
 		private int num;
+		private Card card;
 		
-		private Weight(int num) {
+		private Weight(Card cd, int num) {
+			this.card = cd;
 			this.num = num;
 		}
 		
@@ -57,6 +62,10 @@ public class Topse31044 implements DecisionMaker {
 					.reduce((sum, elm) -> sum + elm)
 					.get();
 		}
+		public Card getCard() {
+			return this.card;
+		}
+		
 		
 		public double getWeight() {
 			return this.getNum() / getSum();
@@ -130,19 +139,32 @@ public class Topse31044 implements DecisionMaker {
 		// =========================
 		// 12～20が悩みどころ
 		// =========================
-		//x ひかなかったことを仮定して機械学習モデルにブチ込む
-		//x 勝利なら1、ドローなら0.5、それ以外は0とし、これをAとする
 		try {
+			PlayerContext context = new PlayerContext(player, game);
 			Classifier aiModelResult = (Classifier) SerializationHelper.read("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
 
-			Instances predictArff = Csv2Arff.getInstances(player, game);
-			int predictedValue = (int) new Evaluation(predictArff).evaluateModelOnce(aiModelResult, predictArff.firstInstance());
+			//x ひかなかったことを仮定して機械学習モデルにブチ込む
+			//x 勝利なら2、ドローなら1、それ以外は0とし、これの13倍をAとする
+			Instances predictArff = Csv2Arff.addToInstancesOrSpawn(null, context);
 
-			//x 引いてみたら1～13だったことを仮定して機械学習モデルにブチ込む
-			Arrays.stream(Weight.values()).forEach(elm -> {
-				//x 勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
+			int nonDraw = (int) new Evaluation(predictArff).evaluateModelOnce(aiModelResult, predictArff.firstInstance());
+			int nonDrawWeighted = nonDraw * 13;
+			
+			double sum = 0.0;
+			
+			for(Weight elm : Weight.values()) {
+				PlayerContext supposing = context.supposeIfDrew(elm.getCard());
+				Instances supposingArff = Csv2Arff.addToInstancesOrSpawn(null, supposing);
+
+				//x 勝利なら2、ドローなら1、それ以外は0とし、その数値とそのカードのウェイトをかける
+				double result = (double) new Evaluation(supposingArff).evaluateModelOnce(aiModelResult, supposingArff.firstInstance());
 				//x 計算結果を集積し、Bとする
-			});
+				sum += result * elm.getWeight();
+			}
+			
+			System.out.println(nonDrawWeighted);
+			System.out.println("VS");
+			System.out.println(sum);
 			
 			//A > B ならスタンド
 			//x それ以外なら引く

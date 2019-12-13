@@ -4,15 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.topse.swdev.bigdata.blackjack.Card;
+import jp.topse.swdev.bigdata.blackjack.Game;
+import jp.topse.swdev.bigdata.blackjack.Player;
 
 /**
  * あるプレイヤーから見える場の状況。自分の手札と、各プレイヤーの1枚目と、勝敗の結果。
  * @author topse31044
  *
  */
-public class PlayerContext {
+public class PlayerContext{
 	private PastPlayer player;
 	private List<Card> publicInfo;
+	
+	public PlayerContext() {
+	}
 	
 	public PlayerContext(PastPlayer player, PastGame pg) {
 		this.player = player;
@@ -21,7 +26,24 @@ public class PlayerContext {
 		this.publicInfo.add(pg.getRanger().first());
 		this.publicInfo.add(pg.getWingDiver().first());
 		this.publicInfo.add(pg.getAirRaider().first());
-		this.publicInfo.add(pg.getFencer().first());;
+		this.publicInfo.add(pg.getFencer().first());
+	}
+	
+	public PlayerContext(Player player, Game pg) {
+		this.player = PastPlayer.convert(player, pg);
+		this.publicInfo = new ArrayList<>();
+		
+		this.publicInfo.add(pg.getUpCard());
+		
+		pg.getPlayerHands().values().forEach(elm -> {
+			this.publicInfo.add(elm.get(0));
+		});
+	}
+	
+	public PlayerContext(PlayerContext context) {
+		PlayerContext pc = new PlayerContext();
+		pc.player = new PastPlayer(context.player);
+		pc.publicInfo = new ArrayList<Card>(context.publicInfo);
 	}
 	
 	/**
@@ -102,6 +124,17 @@ public class PlayerContext {
 	
 	public String getResultInName() {
 		return this.player.getResult().name();
+	}
+	
+	public PlayerContext supposeIfDrew(Card cd) {
+		try {
+			PlayerContext clone = new PlayerContext(this);
+			clone.player.push(cd);
+			return clone;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	
