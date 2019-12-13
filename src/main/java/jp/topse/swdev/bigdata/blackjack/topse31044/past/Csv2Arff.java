@@ -2,7 +2,6 @@ package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +9,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jp.topse.swdev.bigdata.blackjack.Card;
+import jp.topse.swdev.bigdata.blackjack.Game;
+import jp.topse.swdev.bigdata.blackjack.Hand;
+import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -71,6 +74,37 @@ public class Csv2Arff {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public static Instances getInstances(Player player, Game game) {
+		Instances data = new Instances("data1", Csv2Arff.getAttributes(), 0);						
+		double[] values = new double[data.numAttributes()];
+		
+		Hand toadette = game.getPlayerHands().get(player);
+		
+		for (int i = 0; i < 4; i++) {
+			if (i >= toadette.getCount()) {
+				values[i] = 0.0d;
+				continue;
+			}
+			values[i] = PlayerContext.getValueOrDefault(toadette.get(i));
+		}
+		values[5] = game.getUpCard().getValue();
+		
+		Card[] cd = game.getPlayerHands().values().stream().map(elm -> elm.get(0)).toArray(s -> new Card[s]);
+		values[6] = PlayerContext.getValueOrDefault(cd[0]);
+		values[7] = PlayerContext.getValueOrDefault(cd[1]);
+		values[8] = PlayerContext.getValueOrDefault(cd[2]);
+		values[9] = PlayerContext.getValueOrDefault(cd[3]);
+		values[10] = data.attribute(10).indexOfValue("DRAW");
+		data.setClassIndex(10); //x 評価基準
+		data.add(new SparseInstance(1.0, values));
+		
+		return data;
+		
+	}
+	
+	
 	
 	/**
 	 * ARFFデータ取得

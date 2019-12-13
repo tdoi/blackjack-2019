@@ -52,7 +52,7 @@ public class PlayerContext {
 		this.publicInfo = publicInfo;
 	}
 	
-	private static int getValueOrDefault(Card card) {
+	public static int getValueOrDefault(Card card) {
 		if (null == card) {
 			return 0;
 		}

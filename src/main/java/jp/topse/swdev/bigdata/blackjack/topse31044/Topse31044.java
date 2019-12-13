@@ -1,26 +1,22 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044;
 
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import jp.topse.swdev.bigdata.blackjack.Action;
 import jp.topse.swdev.bigdata.blackjack.DecisionMaker;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
-import jp.topse.swdev.bigdata.blackjack.Result;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model.Models;
+import jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext;
+import weka.core.SparseInstance;
 
 /**
  * ブラックジャック
@@ -84,28 +80,28 @@ public class Topse31044 implements DecisionMaker {
 	 * @throws Exception 
 	 */
 	private static void spawn() throws Exception {
-		System.out.println(new Date());
-		// ==================================
-		// CSVからARFFへ
-		// ==================================
-		System.out.println("CSVをARFFへ返還");
-		Csv2Arff arff = new Csv2Arff();
-		arff.parse("H:/git/blackjack-2019/data/2019.csv");
-		System.out.println("CSV解析OK");
-//		arff.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.arff");
-		System.out.println("CSVをARFFへ返還OK");
+//		System.out.println(new Date());
+//		// ==================================
+//		// CSVからARFFへ
+//		// ==================================
+//		System.out.println("CSVをARFFへ返還");
+//		Csv2Arff arff = new Csv2Arff();
+//		arff.parse("H:/git/blackjack-2019/data/2019.csv");
+//		System.out.println("CSV解析OK");
+////		arff.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.arff");
+//		System.out.println("CSVをARFFへ返還OK");
 
-		// ==================================
-		// ARFFからモデルへ
-		// ==================================
-		System.out.println("ARFFをモデルへ返還");
-		long time = System.currentTimeMillis();
-		Arff2Model model = new Arff2Model(Models.J_48);
-		model.build(arff.getArff());
-		System.out.println(System.currentTimeMillis() - time + "ms");
-		System.out.println("モデルのビルドOK");
-		model.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
-		System.out.println("ARFFをモデルへ返還OK");
+//		// ==================================
+//		// ARFFからモデルへ
+//		// ==================================
+//		System.out.println("ARFFをモデルへ返還");
+//		long time = System.currentTimeMillis();
+//		Arff2Model model = new Arff2Model(Models.J_48);
+//		model.build(arff.getArff());
+//		System.out.println(System.currentTimeMillis() - time + "ms");
+//		System.out.println("モデルのビルドOK");
+//		model.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+//		System.out.println("ARFFをモデルへ返還OK");
 		
 	}
 
@@ -136,16 +132,24 @@ public class Topse31044 implements DecisionMaker {
 		// =========================
 		//x ひかなかったことを仮定して機械学習モデルにブチ込む
 		//x 勝利なら1、ドローなら0.5、それ以外は0とし、これをAとする
-		
-		//x 引いてみたら1～13だったことを仮定して機械学習モデルにブチ込む
-		Arrays.stream(Weight.values()).forEach(elm -> {
-			//x 勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
-			//x 計算結果を集積し、Bとする
-		});
-		
-		//A > B ならスタンド
-		//x それ以外なら引く
+		try {
+			Classifier aiModelResult = (Classifier) SerializationHelper.read("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
 
+			Instances predictArff = Csv2Arff.getInstances(player, game);
+			int predictedValue = (int) new Evaluation(predictArff).evaluateModelOnce(aiModelResult, predictArff.firstInstance());
+
+			//x 引いてみたら1～13だったことを仮定して機械学習モデルにブチ込む
+			Arrays.stream(Weight.values()).forEach(elm -> {
+				//x 勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
+				//x 計算結果を集積し、Bとする
+			});
+			
+			//A > B ならスタンド
+			//x それ以外なら引く
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
