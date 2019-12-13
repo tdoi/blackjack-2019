@@ -1,6 +1,8 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
 import jp.topse.swdev.bigdata.blackjack.Card;
+import jp.topse.swdev.bigdata.blackjack.Game;
+import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
 
 public class PastPlayer {

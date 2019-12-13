@@ -5,6 +5,7 @@ import jp.topse.swdev.bigdata.blackjack.Deck;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result;
+import jp.topse.swdev.bigdata.blackjack.topse31044.Topse31044;
 import jp.topse.swdev.bigdata.blackjack.*;
 
 /**
@@ -17,9 +18,10 @@ public class Demo {
 				new Player("Aice"),
 				new Player("Bob"),
 				new Player("Charlie"),
-				new Player("Dave"),
+//				new Player("Dave"),
 //				new Player("Ellen"),
-//				new Player("Frank")
+//				new Player("Frank"),
+				new Player("Toadette", new Topse31044()),
 		};
 		Demo demo = new Demo(players);
 		demo.eval();

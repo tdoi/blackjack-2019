@@ -70,12 +70,12 @@ public class PastGame {
 	 * 各々のプレイヤーから見える状況を取得
 	 * @return
 	 */
-	public List<PastPlayerContext> getPlayerContexts(){
+	public List<PlayerContext> getPlayerContexts(){
 		return Arrays.asList(
-				new PastPlayerContext(this.ranger, this),
-				new PastPlayerContext(this.wingDiver, this),
-				new PastPlayerContext(this.airRaider, this),
-				new PastPlayerContext(this.fencer, this));
+				new PlayerContext(this.ranger, this),
+				new PlayerContext(this.wingDiver, this),
+				new PlayerContext(this.airRaider, this),
+				new PlayerContext(this.fencer, this));
 	}
 
 	/**
