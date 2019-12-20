@@ -18,10 +18,7 @@ public class Demo {
 				new Player("Aice"),
 				new Player("Bob"),
 				new Player("Charlie"),
-//				new Player("Dave"),
-//				new Player("Ellen"),
-//				new Player("Frank"),
-				new Player("Toadette", new Topse31044()),
+				new Player("Dave"),
 		};
 		Demo demo = new Demo(players);
 		demo.eval();

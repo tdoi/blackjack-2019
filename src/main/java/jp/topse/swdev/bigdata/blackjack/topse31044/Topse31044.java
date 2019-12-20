@@ -29,6 +29,18 @@ import weka.core.SparseInstance;
  */
 public class Topse31044 implements DecisionMaker {
 	
+	private static Classifier MODEL;
+	static {
+		try {
+			MODEL = (Classifier) SerializationHelper.read(
+					"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+
 	private enum Weight{
 		ACE(Card.ACE, 62008),
 		TWO(Card.TWO, 94047),
@@ -115,16 +127,14 @@ public class Topse31044 implements DecisionMaker {
 	}
 
 	/**
-	 * 戦略…カードを引かない・カードを引いたら1がでた・2が出た・・・を仮定し、
-	 * それを機械学習モデルにぶち込んで、かつパターンのみを抽出し、ウェイトをもとに確立計算して
-	 * 50%以上だったらレイズする。
+	 * 
 	 */
 	@Override
 	public Action decide(Player player, Game game) {
 		int currentNum = game.getPlayerHands().get(player).eval();
 
 		// =========================
-		//x 悩むまでもないロジック
+		// 悩むまでもないロジック
 		// =========================
 		// 11以下ならカード引いてもバーストする恐れがないので引く。
 		if (11 >= currentNum) {
@@ -141,33 +151,45 @@ public class Topse31044 implements DecisionMaker {
 		// =========================
 		try {
 			PlayerContext context = new PlayerContext(player, game);
-			Classifier aiModelResult = (Classifier) SerializationHelper.read("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+			
 
-			//x ひかなかったことを仮定して機械学習モデルにブチ込む
-			//x 勝利なら2、ドローなら1、それ以外は0とし、これの13倍をAとする
+			// ひかなかったことを仮定して機械学習モデルにブチ込む
 			Instances predictArff = Csv2Arff.addToInstancesOrSpawn(null, context);
 
-			int nonDraw = (int) new Evaluation(predictArff).evaluateModelOnce(aiModelResult, predictArff.firstInstance());
-			int nonDrawWeighted = nonDraw * 13;
+			int nonDraw = (int) new Evaluation(predictArff).evaluateModelOnce(MODEL, predictArff.firstInstance());
+			Type nonDrawResult = Type.values()[nonDraw];
+
+			// ひかなかった結果勝ちならコール、負けならレイズ
+			switch (nonDrawResult) {
+			case WIN:
+				p("NON-TSUMO: " + Action.STAND);
+				return Action.STAND;
+			case LOSE:
+				p("NON-TSUMO: " + Action.HIT);
+				return Action.HIT;
+			default:
+				break;
+			}
 			
+			// ひかなかった場合ドローなら、さらに1～13それぞれツモった場合を仮定して計算する	
 			double sum = 0.0;
 			
 			for(Weight elm : Weight.values()) {
 				PlayerContext supposing = context.supposeIfDrew(elm.getCard());
 				Instances supposingArff = Csv2Arff.addToInstancesOrSpawn(null, supposing);
 
-				//x 勝利なら2、ドローなら1、それ以外は0とし、その数値とそのカードのウェイトをかける
-				double result = (double) new Evaluation(supposingArff).evaluateModelOnce(aiModelResult, supposingArff.firstInstance());
-				//x 計算結果を集積し、Bとする
+				//x 勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
+				double result = (double) new Evaluation(supposingArff).evaluateModelOnce(MODEL, supposingArff.firstInstance());
 				sum += result * elm.getWeight();
 			}
+			p(sum * 50  + "%");
+
+			// 勝つ可能性が低いならコール、高いならレイズ
+			Action act = Type.DRAW.ordinal() > sum ? Action.STAND : Action.HIT;
+			p("TSUMO: " + act);
 			
-			System.out.println(nonDrawWeighted);
-			System.out.println("VS");
-			System.out.println(sum);
+			return act;
 			
-			//A > B ならスタンド
-			//x それ以外なら引く
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,21 +197,17 @@ public class Topse31044 implements DecisionMaker {
 		return null;
 	}
 	
-	public Type guess() {
-
-//	        int predictedValue = Integer.MAX_VALUE;
-//	        try {
-//	            if (aiModelResult == null) {
-//	                aiModelResult = (Classifier) SerializationHelper.read(CLASSIFIER_MODEL_RESULT);
-//	            }
-//	            List<DataModelResult> predictData = new ArrayList<>();
-//	            predictData.add(new DataModelResult(dealerUpCard, hand1, hand2, hand3, hand4, hand5, Result.Type.WIN)); // 結果の引数はダミー
-//	            Instances predictArff = dataResult2arff(predictData);
-//	            predictedValue = (int) new Evaluation(predictArff).evaluateModelOnce(aiModelResult, predictArff.firstInstance());
-//	        } catch (Exception e) {
-//	            e.printStackTrace();
-//	        }
-//	        return (predictedValue == Integer.MAX_VALUE) ? null : CLASS_VALUES_RESULT[predictedValue];
-		return null;
+	public void p(String strings) {
+		p(strings, true);
+	}
+	
+	public void p(String strings, boolean ln) {
+		if(true) {return;}
+		
+		if (ln) {
+			System.out.println(strings);
+		}else {
+			System.out.print(strings);
+		}
 	}
 }

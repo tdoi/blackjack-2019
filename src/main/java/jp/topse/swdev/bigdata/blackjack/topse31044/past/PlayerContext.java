@@ -12,16 +12,15 @@ import jp.topse.swdev.bigdata.blackjack.Player;
  * @author topse31044
  *
  */
-public class PlayerContext{
+public class PlayerContext implements Cloneable{
 	private PastPlayer player;
-	private List<Card> publicInfo;
+	private ArrayList<Card> publicInfo = new ArrayList<>();
 	
 	public PlayerContext() {
 	}
 	
 	public PlayerContext(PastPlayer player, PastGame pg) {
 		this.player = player;
-		this.publicInfo = new ArrayList<>();
 		this.publicInfo.add(pg.getToadette().first());
 		this.publicInfo.add(pg.getRanger().first());
 		this.publicInfo.add(pg.getWingDiver().first());
@@ -38,12 +37,6 @@ public class PlayerContext{
 		pg.getPlayerHands().values().forEach(elm -> {
 			this.publicInfo.add(elm.get(0));
 		});
-	}
-	
-	public PlayerContext(PlayerContext context) {
-		PlayerContext pc = new PlayerContext();
-		pc.player = new PastPlayer(context.player);
-		pc.publicInfo = new ArrayList<Card>(context.publicInfo);
 	}
 	
 	/**
@@ -70,7 +63,7 @@ public class PlayerContext{
 	/**
 	 * @param publicInfo the publicInfo to set
 	 */
-	public void setPublicInfo(List<Card> publicInfo) {
+	public void setPublicInfo(ArrayList<Card> publicInfo) {
 		this.publicInfo = publicInfo;
 	}
 	
@@ -83,23 +76,23 @@ public class PlayerContext{
 	}
 	
 	public double getThisFirst() {
-		return getValueOrDefault(this.getPlayer().cardAt(0));
+		return getValueOrDefault(this.getPlayer().cardAtOrDefault(0));
 	}
 	
 	public double getThisSecond() {
-		return getValueOrDefault(this.getPlayer().cardAt(1));
+		return getValueOrDefault(this.getPlayer().cardAtOrDefault(1));
 	}
 	
 	public double getThisThird() {
-		return getValueOrDefault(this.getPlayer().cardAt(2));
+		return getValueOrDefault(this.getPlayer().cardAtOrDefault(2));
 	}
 	
 	public double getThisFourth() {
-		return getValueOrDefault(this.getPlayer().cardAt(3));
+		return getValueOrDefault(this.getPlayer().cardAtOrDefault(3));
 	}
 	
 	public double getThisFifth() {
-		return getValueOrDefault(this.getPlayer().cardAt(4));
+		return getValueOrDefault(this.getPlayer().cardAtOrDefault(4));
 	}
 	
 	public double getFirstPublic() {
@@ -128,8 +121,8 @@ public class PlayerContext{
 	
 	public PlayerContext supposeIfDrew(Card cd) {
 		try {
-			PlayerContext clone = new PlayerContext(this);
-			clone.player.push(cd);
+			PlayerContext clone = (PlayerContext) this.clone();
+			clone.player.add(cd);
 			return clone;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -137,5 +130,13 @@ public class PlayerContext{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Object clone() {
+		PlayerContext clone = new PlayerContext();
+		clone.player = (PastPlayer) this.player.clone();
+		clone.publicInfo = (ArrayList<Card>) this.publicInfo.clone();
+		
+		return clone;
+	}
 	
 }

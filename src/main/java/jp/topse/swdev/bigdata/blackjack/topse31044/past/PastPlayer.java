@@ -1,12 +1,15 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jp.topse.swdev.bigdata.blackjack.Card;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Hand;
 import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
 
-public class PastPlayer {
+public class PastPlayer implements Cloneable{
 	
 	/**x プレーヤー名 */
 	private String name = "";
@@ -15,16 +18,17 @@ public class PastPlayer {
 	private Type result = Type.LOSE;
 	
 	/**x 手札 */
-	private Card[] tefuda = new Card[5];
+	private ArrayList<Card> tefuda = new ArrayList<>();
 	
 	public PastPlayer() {
 	}
 	
+	@SuppressWarnings("unchecked")
 	public PastPlayer(PastPlayer arg) {
 		PastPlayer pp = new PastPlayer();
 		pp.name = arg.name;
 		pp.result = arg.result;
-		pp.tefuda = arg.tefuda.clone();
+		pp.tefuda = (ArrayList<Card>) arg.tefuda.clone();
 	}
 	
 	/**
@@ -41,7 +45,7 @@ public class PastPlayer {
 		Hand hd = gm.getPlayerHands().get(pl);
 		
 		for (int lp = 0; lp < hd.getCount(); lp++) {
-			pp.tefuda[lp] = hd.get(lp);
+			pp.tefuda.add(hd.get(lp));
 		}
 		
 		return pp;
@@ -64,7 +68,7 @@ public class PastPlayer {
 	 * @return カード
 	 */
 	public Card first() {
-		return this.cardAt(0);
+		return this.cardAtOrDefault(0);
 	}
 
 	/**
@@ -72,39 +76,34 @@ public class PastPlayer {
 	 * @param tefuda 何番目か
 	 * @return カード
 	 */
-	public Card cardAt(int index) {
-		return tefuda[index];
+	public Card cardAtOrDefault(int index) {
+		if(this.tefuda.size() <= index) {
+			return null;
+		}
+		
+		return this.tefuda.get(index);
 	}
 
 	/**
-	 * カード名から列挙型を解析し、指定の位置にセット
+	 * カード名から列挙型を解析し、追加
 	 * @param index 位置
 	 * @param card カード名
 	 */
-	public void parseCardNameAt(int index, String card) {
+	public void parseAndAdd(String card) {
 		try {
-			this.tefuda[index] = Card.valueOf(card);
+			this.tefuda.add(Card.valueOf(card));
 		} catch(Exception e) {
-			this.tefuda[index] = null;
+			e.printStackTrace();
 		}
 	}
 	
 	/**
-	 * 空いてる手札にカードを突っ込む。すでに満タンなら何もしない。
+	 * 空いてる手札にカードを突っ込む。
 	 * @param c
 	 * @return 
 	 */
-	public boolean push(Card cd) {
-		for(int lp =0; lp < this.tefuda.length; lp++) {
-			if (null != this.tefuda[lp]) {
-				continue;
-			}
-			
-			this.tefuda[lp] = cd;
-			return true;
-		}
-		
-		return false;
+	public void add(Card card) {
+		this.tefuda.add(card);
 	}
 	
 
@@ -127,5 +126,14 @@ public class PastPlayer {
 	 */
 	public Type getResult() {
 		return result;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Object clone() {
+		PastPlayer clone = new PastPlayer();
+		clone.name = this.name;
+		clone.result = this.result;
+		clone.tefuda = (ArrayList<Card>) this.tefuda.clone();
+		return clone;
 	}
 }
