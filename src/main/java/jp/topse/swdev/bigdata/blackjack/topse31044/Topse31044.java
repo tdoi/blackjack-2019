@@ -179,7 +179,7 @@ public class Topse31044 implements DecisionMaker {
 		if (null == Topse31044.MODEL) {
 			try {
 				Topse31044.MODEL = (Classifier) SerializationHelper.read(
-						"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+						"C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\past\\topse31044_2019.model");
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
