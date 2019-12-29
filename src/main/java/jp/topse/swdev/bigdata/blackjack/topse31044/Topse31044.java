@@ -2,7 +2,6 @@ package jp.topse.swdev.bigdata.blackjack.topse31044;
 
 
 import java.util.Arrays;
-import java.util.Date;
 
 import jp.topse.swdev.bigdata.blackjack.Action;
 import jp.topse.swdev.bigdata.blackjack.Card;
@@ -10,16 +9,12 @@ import jp.topse.swdev.bigdata.blackjack.DecisionMaker;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.Arff2Model.Models;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.PastGame;
 import jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
-import weka.core.SparseInstance;
 
 /**
  * ブラックジャック
@@ -28,18 +23,22 @@ import weka.core.SparseInstance;
  *
  */
 public class Topse31044 implements DecisionMaker {
-	
+
 	private static Classifier MODEL;
 	static {
+
+	}
+
+	public static void main(String[] args) {
 		try {
-			MODEL = (Classifier) SerializationHelper.read(
-					"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+			spawn();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
-	
+
 
 	private enum Weight{
 		ACE(Card.ACE, 62008),
@@ -55,19 +54,19 @@ public class Topse31044 implements DecisionMaker {
 		JACK(Card.JACK, 61828),
 		QUEEN(Card.QUEEN, 61789),
 		KING(Card.KING, 62213);
-		
+
 		private int num;
 		private Card card;
-		
+
 		private Weight(Card cd, int num) {
 			this.card = cd;
 			this.num = num;
 		}
-		
+
 		private double getNum() {
 			return this.num;
 		}
-		
+
 		private static double getSum() {
 			return Arrays.stream(Weight.values())
 					.map(elm -> elm.getNum())
@@ -77,28 +76,19 @@ public class Topse31044 implements DecisionMaker {
 		public Card getCard() {
 			return this.card;
 		}
-		
-		
+
+
 		public double getWeight() {
 			return this.getNum() / getSum();
 		}
-		
+
 	}
-	
-	
-	public static void main(String[] args) {
-		try {
-			spawn();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
+
+
+
 	/**
 	 * CSVをmodelに変換
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static void spawn() throws Exception {
 //		System.out.println(new Date());
@@ -123,11 +113,11 @@ public class Topse31044 implements DecisionMaker {
 //		System.out.println("モデルのビルドOK");
 //		model.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
 //		System.out.println("ARFFをモデルへ返還OK");
-		
+
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public Action decide(Player player, Game game) {
@@ -140,7 +130,7 @@ public class Topse31044 implements DecisionMaker {
 		if (11 >= currentNum) {
 			return Action.HIT;
 		}
-		
+
 		// 21以上ならカード引いたら絶対バーストするので引かない。
 		if (21 <= currentNum) {
 			return Action.STAND;
@@ -149,17 +139,64 @@ public class Topse31044 implements DecisionMaker {
 		// =========================
 		// 12～20が悩みどころ
 		// =========================
-		try {
-			PlayerContext context = new PlayerContext(player, game);
-			
+		return this.logic_v1(player, game);
+	}
 
-			// ひかなかったことを仮定して機械学習モデルにブチ込む
+	/**
+	 * 判断ロジックv1
+	 * @param player
+	 * @param game
+	 * @return
+	 */
+	public Action logic_v2(Player player, Game game) {
+		// ==================================
+		// このまま引かなければ勝てるのかどうか判断
+		// ==================================
+		// 現在の枚数が2枚か、3枚か、4枚かで使うモデルを分ける
+
+		// 勝てるのならばスタンドを返す
+		// 負けるのならば次のロジックへ
+
+		// ==================================
+		// 引いてバーストしないか判断
+		// ==================================
+		// 現在の枚数が2枚か、3枚か、4枚かで使うモデルを分ける
+
+		// バーストするならヒットを返す
+		// バーストしないならスタンドを返す
+
+		return null;
+	}
+
+	/**
+	 * 判断ロジックv1
+	 * @param player
+	 * @param game
+	 * @return
+	 */
+	public Action logic_v1(Player player, Game game) {
+		if (null == Topse31044.MODEL) {
+			try {
+				Topse31044.MODEL = (Classifier) SerializationHelper.read(
+						"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			// =============================
+			// このまま引かなければ勝てるのか判断
+			// =============================
+			PlayerContext context = new PlayerContext(player, game);
 			Instances predictArff = Csv2Arff.addToInstancesOrSpawn(null, context);
 
+			// 現在の状況を機械学習にブチ込む
 			int nonDraw = (int) new Evaluation(predictArff).evaluateModelOnce(MODEL, predictArff.firstInstance());
 			Type nonDrawResult = Type.values()[nonDraw];
 
-			// ひかなかった結果勝ちならコール、負けならレイズ
+			// ひかなかった結果勝ちならスタンド、負けならカードを自摸る
 			switch (nonDrawResult) {
 			case WIN:
 				p("NON-TSUMO: " + Action.STAND);
@@ -170,40 +207,44 @@ public class Topse31044 implements DecisionMaker {
 			default:
 				break;
 			}
-			
-			// ひかなかった場合ドローなら、さらに1～13それぞれツモった場合を仮定して計算する	
+
+			// =============================
+			// ドローの場合、1～13をそれぞれ自摸った場合を仮定し勝敗を予測し、
+			// カードの出現確率でそれらを重みづけをして加算する
+			// =============================
 			double sum = 0.0;
-			
+
 			for(Weight elm : Weight.values()) {
 				PlayerContext supposing = context.supposeIfDrew(elm.getCard());
 				Instances supposingArff = Csv2Arff.addToInstancesOrSpawn(null, supposing);
 
-				//x 勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
+				//勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
 				double result = (double) new Evaluation(supposingArff).evaluateModelOnce(MODEL, supposingArff.firstInstance());
 				sum += result * elm.getWeight();
 			}
 			p(sum * 50  + "%");
 
-			// 勝つ可能性が低いならコール、高いならレイズ
+			// 勝つ可能性が低いならスタンド、高いなら自模る
 			Action act = Type.DRAW.ordinal() > sum ? Action.STAND : Action.HIT;
 			p("TSUMO: " + act);
-			
+
 			return act;
-			
+
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		return null;
 	}
-	
+
 	public void p(String strings) {
 		p(strings, true);
 	}
-	
+
 	public void p(String strings, boolean ln) {
 		if(true) {return;}
-		
+
 		if (ln) {
 			System.out.println(strings);
 		}else {

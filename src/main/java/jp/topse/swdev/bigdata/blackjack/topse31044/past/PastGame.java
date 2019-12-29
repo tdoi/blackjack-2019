@@ -1,25 +1,16 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class PastGame {	
-	/**x ディーラー(Dealer) */
-	private PastPlayer toadette;
-	
-	/**x アリス(Aice) */
-	private PastPlayer ranger;
+public class PastGame {
+	/** ディーラー */
+	private PastPlayer dealer;
 
-	/**x ボブ(Bob) */
-	private PastPlayer wingDiver;
-	
-	/**x チャーリー(Charlie) */
-	private PastPlayer airRaider;
-	
-	/**x デーブ(Dave) */
-	private PastPlayer fencer;
-	
+	/** プレイヤー */
+	private ArrayList<PastPlayer> players = new ArrayList<>();
+
 	/**
 	 * CSVを解析して構造化
 	 * @param line
@@ -27,24 +18,23 @@ public class PastGame {
 	 */
 	public static PastGame parse(String line) {
 		PastGame pg = new PastGame();
-		
+
 		String[] el = line.split(",");
-		
-		// ======================================
-		//x ディーラー
-		// ======================================
-	    pg.toadette = new PastPlayer();
-	    pg.toadette.setName(el[0]);
-	    pg.toadette.parseAndAdd(el[1]);
-	    pg.toadette.parseAndAdd(el[2]);
-	    pg.toadette.parseAndAdd(el[3]);
-	    pg.toadette.parseAndAdd(el[4]);
-	    pg.toadette.parseAndAdd(el[5]);
 
 		// ======================================
-		//x プレイヤー
+		// ディーラー
 		// ======================================
-	    List<PastPlayer> bufPl = new ArrayList<>();
+	    pg.dealer = new PastPlayer();
+	    pg.dealer.setName(el[0]);
+	    pg.dealer.parseAndAdd(el[1]);
+	    pg.dealer.parseAndAdd(el[2]);
+	    pg.dealer.parseAndAdd(el[3]);
+	    pg.dealer.parseAndAdd(el[4]);
+	    pg.dealer.parseAndAdd(el[5]);
+
+		// ======================================
+		// プレイヤー
+		// ======================================
 	    for (int lp = 0; lp < 4; lp++) {
 	    	int offset = 6 + lp * 7;
 	    	PastPlayer pl  = new PastPlayer();
@@ -55,63 +45,31 @@ public class PastGame {
 	    	pl.parseAndAdd(el[offset + 4]);
 	    	pl.parseAndAdd(el[offset + 5]);
 	    	pl.parseResult(el[offset + 6]);
-	    	bufPl.add(pl);
+	    	pg.players.add(pl);
 	    }
-	    
-	    pg.ranger = bufPl.get(0);
-	    pg.wingDiver = bufPl.get(1);
-	    pg.airRaider = bufPl.get(2);
-	    pg.fencer = bufPl.get(3);
-	    
+
 	    return pg;
 	}
-	
+
 	/**
 	 * 各々のプレイヤーから見える状況を取得
 	 * @return
 	 */
 	public List<PlayerContext> getPlayerContexts(){
-		return Arrays.asList(
-				new PlayerContext(this.ranger, this),
-				new PlayerContext(this.wingDiver, this),
-				new PlayerContext(this.airRaider, this),
-				new PlayerContext(this.fencer, this));
+		return this.players.stream().map(elm ->
+				new PlayerContext(elm, this)).collect(Collectors.toList());
 	}
 
-	/**
-	 * @return the toadette
-	 */
-	public PastPlayer getToadette() {
-		return toadette;
+	public PastPlayer getDealer() {
+		return dealer;
 	}
 
-	/**
-	 * @return the ranger
-	 */
-	public PastPlayer getRanger() {
-		return ranger;
+	public ArrayList<PastPlayer> getPlayers() {
+		return players;
 	}
 
-	/**
-	 * @return the wingDiver
-	 */
-	public PastPlayer getWingDiver() {
-		return wingDiver;
+	public void setDealer(PastPlayer dealer) {
+		this.dealer = dealer;
 	}
-
-	/**
-	 * @return the airRaider
-	 */
-	public PastPlayer getAirRaider() {
-		return airRaider;
-	}
-
-	/**
-	 * @return the fencer
-	 */
-	public PastPlayer getFencer() {
-		return fencer;
-	}
-
 
 }
