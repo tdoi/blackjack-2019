@@ -2,6 +2,7 @@ package jp.topse.swdev.bigdata.blackjack.topse31044;
 
 
 import java.util.Arrays;
+import java.util.Date;
 
 import jp.topse.swdev.bigdata.blackjack.Action;
 import jp.topse.swdev.bigdata.blackjack.Card;
@@ -91,16 +92,16 @@ public class Topse31044 implements DecisionMaker {
 	 * @throws Exception
 	 */
 	private static void spawn() throws Exception {
-//		System.out.println(new Date());
-//		// ==================================
-//		// CSVからARFFへ
-//		// ==================================
-//		System.out.println("CSVをARFFへ返還");
-//		Csv2Arff arff = new Csv2Arff();
-//		arff.parse("H:/git/blackjack-2019/data/2019.csv");
-//		System.out.println("CSV解析OK");
-////		arff.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.arff");
-//		System.out.println("CSVをARFFへ返還OK");
+		System.out.println(new Date());
+		// ==================================
+		// CSVからARFFへ
+		// ==================================
+		System.out.println("CSVをARFFへ返還");
+		Csv2Arff arff = new Csv2Arff();
+		arff.parse("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\data\\2019.csv");
+		System.out.println("CSV解析OK");
+		arff.save("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\topse31044\\past\\topse31044_2019_stand_to_win_2.arff");
+		System.out.println("CSVをARFFへ返還OK");
 
 //		// ==================================
 //		// ARFFからモデルへ

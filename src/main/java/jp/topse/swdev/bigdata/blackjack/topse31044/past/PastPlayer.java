@@ -11,13 +11,13 @@ import jp.topse.swdev.bigdata.blackjack.Result.Type;
 
 public class PastPlayer implements Cloneable{
 	
-	/** プレーヤー名 */
+	/**x プレーヤー名 */
 	private String name = "";
 	
-	/** 勝敗 */
+	/**x 勝敗 */
 	private Type result = Type.LOSE;
 	
-	/** 手札 */
+	/**x 手札 */
 	private ArrayList<Card> tefuda = new ArrayList<>();
 	
 	public PastPlayer() {

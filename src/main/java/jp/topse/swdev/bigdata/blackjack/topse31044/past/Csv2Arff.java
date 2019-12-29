@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import jp.topse.swdev.bigdata.blackjack.Card;
+import jp.topse.swdev.bigdata.blackjack.Game;
+import jp.topse.swdev.bigdata.blackjack.Hand;
+import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -21,43 +25,44 @@ import weka.core.converters.ArffSaver;
  *
  */
 public class Csv2Arff {
-
+	
 	/** ARFFデータ */
 	private Instances arff;
 
 	public void parse(String filePath) {
-		// =====================
-		// ファイル読み込み
-		// =====================
+		//x=====================
+		//x  ファイル読み込み
+		//x=====================
 		File file = new File(filePath);
 		try(FileReader fr = new FileReader(file);
 			BufferedReader br = new BufferedReader(fr);){
-
-			// =====================
-			// 過去の結果を構造化
-			// ※4人対戦を、それぞれ分割
-			// =====================
+			
+			//x=====================
+			//x 過去の結果を構造化
+			//x ※4人対戦を、それぞれ分割
+			//x=====================
 			Stream<PastGame> rawList = br.lines().map(
 					elm -> PastGame.parse(elm));
 			List<PastGame> pastGames  = rawList.collect(Collectors.toList());
-
-			// =====================
-			// 構造化したものをARFFに変換
-			// =====================
+			
+	
+			//x=====================
+			//x 構造化したものをARFFに変換
+			//x=====================
 			Instances data = null;
 			pastGames.forEach(elm ->
 				elm.getPlayerContexts().forEach(elm2 -> Csv2Arff.addToInstancesOrSpawn(data, elm2))
-			);
+			);	
 			this.arff = data;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
-
+	
+	
 	/**
-	 *
+	 * 
 	 * @param arg
 	 * @param pc
 	 * @return
@@ -77,9 +82,9 @@ public class Csv2Arff {
 			attr.add(new Attribute("third_open"));
 			attr.add(new Attribute("fourth_open"));
 			attr.add(newAttributes("results", Type.LOSE.name(), Type.DRAW.name(), Type.WIN.name()));
-			data = new Instances("data1", attr, 0);
-		}
-
+			data = new Instances("data1", attr, 0); 
+		}	
+		
 		double[] values = new double[data.numAttributes()];
 		values[0] = pc.getThisFirst();
 		values[1] = pc.getThisSecond();
@@ -92,14 +97,14 @@ public class Csv2Arff {
 		values[8] = pc.getFourthPublic();
 		values[9] = pc.getFifthPublic();
 		values[10] = data.attribute(10).indexOfValue(pc.getResultInName());
-		data.setClassIndex(10); //評価基準
-		data.add(new SparseInstance(1.0, values));
-
+		data.setClassIndex(10); //x 評価基準
+		data.add(new SparseInstance(1.0, values));	
+		
 		return data;
 	}
-
-
-
+	
+	
+	
 	/**
 	 * ARFFデータ取得
 	 * @return ARFFデータ
@@ -107,7 +112,7 @@ public class Csv2Arff {
 	public Instances getArff() {
 		return this.arff;
 	}
-
+	
 	/**
 	 * ARFFデータを保存する
 	 * @param filePath ファイルパス
