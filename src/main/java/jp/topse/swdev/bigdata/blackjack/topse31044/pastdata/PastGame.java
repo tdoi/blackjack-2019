@@ -9,7 +9,7 @@ public class PastGame {
 	private PastPlayer dealer;
 
 	/**x プレーヤーリスト */
-	private ArrayList<PastPlayer> players;
+	private ArrayList<PastPlayer> players = new ArrayList<>();
 
 	/**
 	 * CSVを解析して構造化
@@ -26,11 +26,11 @@ public class PastGame {
 		// ======================================
 	    pg.dealer = new PastPlayer();
 	    pg.dealer.setName(el[0]);
-	    pg.dealer.parseAndAdd(el[1]);
-	    pg.dealer.parseAndAdd(el[2]);
-	    pg.dealer.parseAndAdd(el[3]);
-	    pg.dealer.parseAndAdd(el[4]);
-	    pg.dealer.parseAndAdd(el[5]);
+	    pg.dealer.addOrAbort(el[1]);
+	    pg.dealer.addOrAbort(el[2]);
+	    pg.dealer.addOrAbort(el[3]);
+	    pg.dealer.addOrAbort(el[4]);
+	    pg.dealer.addOrAbort(el[5]);
 
 		// ======================================
 		// プレイヤー
@@ -39,11 +39,11 @@ public class PastGame {
 	    	int offset = 6 + lp * 7;
 	    	PastPlayer pl  = new PastPlayer();
 	    	pl.setName(el[offset]);
-	    	pl.parseAndAdd(el[offset + 1]);
-	    	pl.parseAndAdd(el[offset + 2]);
-	    	pl.parseAndAdd(el[offset + 3]);
-	    	pl.parseAndAdd(el[offset + 4]);
-	    	pl.parseAndAdd(el[offset + 5]);
+	    	pl.addOrAbort(el[offset + 1]);
+	    	pl.addOrAbort(el[offset + 2]);
+	    	pl.addOrAbort(el[offset + 3]);
+	    	pl.addOrAbort(el[offset + 4]);
+	    	pl.addOrAbort(el[offset + 5]);
 	    	pl.parseResult(el[offset + 6]);
 	    	pg.players.add(pl);
 	    }

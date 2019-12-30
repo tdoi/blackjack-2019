@@ -1,10 +1,12 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.pastdata;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import jp.topse.swdev.bigdata.blackjack.Card;
 import jp.topse.swdev.bigdata.blackjack.Game;
+import jp.topse.swdev.bigdata.blackjack.Hand;
 import jp.topse.swdev.bigdata.blackjack.Player;
 
 /**
@@ -26,18 +28,17 @@ public class PlayerContext implements Cloneable{
 		// ディーラーの1枚目
 		this.dealerFirst = pg.getDealer().first();
 
-		boolean[] future = {true};
+		boolean[] afterFromMe = {false};
 		pg.getPlayers().forEach(elm -> {
-
-			// 他プレーヤーの1枚目
-			this.publicInfo.add(elm.first());
-
-			// 自分より前のプレイやーはすべて見れる
-			if (future[0]) {
+			// 自分より後のプレイヤーは最初の1枚だけ
+			if (afterFromMe[0]) {
+				this.publicInfo.add(elm.first());
 				return;
 			}
+
+			// 自分より前のプレイヤーは全てみれる。
 			if (player == elm) {
-				future[0] = true;
+				afterFromMe[0] = true;
 			}
 			elm.getCards().forEach(this.publicInfo::add);
 		});
@@ -90,13 +91,55 @@ public class PlayerContext implements Cloneable{
 	/**
 	 * @return the player
 	 */
-	public int getPlayerCardIndex(int index) {
-		Card cd = this.getPlayer().getTefuda().get(index);
+	public int getPlayerCardIndex(int pos) {
+		Hand hn = this.getPlayer().getTefuda();
 
-		return null == cd ? 0 : cd.getIndex();
+		if (pos >= hn.getCount()) {
+			return 0;
+		}
+
+		return hn.get(pos).getIndex();
 	}
 
 	public int getDealerFirstIndex() {
 		return dealerFirst.getIndex();
+	}
+
+	public int handCount() {
+		return player.getTefuda().getCount();
+	}
+
+
+	@Override
+	public String toString() {
+		return this.player.getName() + ":"
+				+ this.player.getResult() + "/"
+				+ "count=" + this.player.getTefuda().getCount() + "/"
+				+ "last=" + this.player.last() + "/"
+				+ "hand=" + this.player.getCards() + "/"
+				+ "dealer=" + this.dealerFirst + "/"
+				+ "stats=" + this.getStats();
+	}
+
+	public PlayerContext supposeIfDrew(Card card) {
+		// TODO 自動生成されたメソッド・スタブ
+		return null;
+	}
+
+	/**
+	 * 公開情報カードの統計。
+	 * @return
+	 */
+	public LinkedHashMap<Card, Long> getStats() {
+		List<Card> plcd = this.getPublicInfo();
+
+		LinkedHashMap<Card, Long> stats = new LinkedHashMap<>();
+		for(Card cd : Card.values()) {
+			stats.put(cd,
+					plcd.stream().filter(elm -> elm == cd).count()
+					);
+		}
+
+		return stats;
 	}
 }

@@ -10,8 +10,9 @@ import jp.topse.swdev.bigdata.blackjack.DecisionMaker;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result.Type;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff;
-import jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext;
+import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Arff2Model;
+import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Arff2Model.Models;
+import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Csv2Arff;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -100,18 +101,20 @@ public class Topse31044 implements DecisionMaker {
 		Csv2Arff arff = new Csv2Arff();
 		arff.parse("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\data\\2019.csv");
 		System.out.println("CSV解析OK");
-		arff.save("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\topse31044\\past\\topse31044_2019_stand_to_win_2.arff");
+		arff.save("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\pastdata\\topse31044_2019_stand_to_win.arff");
 		System.out.println("CSVをARFFへ返還OK");
 
-//		// ==================================
-//		// ARFFからモデルへ
-//		// ==================================
-//		System.out.println("ARFFをモデルへ返還");
-//		long time = System.currentTimeMillis();
-//		Arff2Model model = new Arff2Model(Models.J_48);
-//		model.build(arff.getArff());
-//		System.out.println(System.currentTimeMillis() - time + "ms");
-//		System.out.println("モデルのビルドOK");
+		// ==================================
+		// ARFFからモデルへ
+		// ==================================
+		System.out.println("ARFFをモデルへ返還");
+		long time = System.currentTimeMillis();
+		Arff2Model model = new Arff2Model(Models.J_48);
+		model.build(arff.getArff(), true);
+		System.out.println(System.currentTimeMillis() - time + "ms");
+		System.out.println("モデルのビルドOK");
+		model.toVisual();
+
 //		model.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
 //		System.out.println("ARFFをモデルへ返還OK");
 
@@ -190,8 +193,9 @@ public class Topse31044 implements DecisionMaker {
 			// =============================
 			// このまま引かなければ勝てるのか判断
 			// =============================
-			PlayerContext context = new PlayerContext(player, game);
-			Instances predictArff = Csv2Arff.addToInstancesOrSpawn(null, context);
+			jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext context
+				= new jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext(player, game);
+			Instances predictArff = jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff.addToInstancesOrSpawn(null, context);
 
 			// 現在の状況を機械学習にブチ込む
 			int nonDraw = (int) new Evaluation(predictArff).evaluateModelOnce(MODEL, predictArff.firstInstance());
@@ -216,8 +220,9 @@ public class Topse31044 implements DecisionMaker {
 			double sum = 0.0;
 
 			for(Weight elm : Weight.values()) {
-				PlayerContext supposing = context.supposeIfDrew(elm.getCard());
-				Instances supposingArff = Csv2Arff.addToInstancesOrSpawn(null, supposing);
+				jp.topse.swdev.bigdata.blackjack.topse31044.past.PlayerContext supposing
+					= context.supposeIfDrew(elm.getCard());
+				Instances supposingArff = jp.topse.swdev.bigdata.blackjack.topse31044.past.Csv2Arff.addToInstancesOrSpawn(null, supposing);
 
 				//勝利なら1、ドローなら0.5、それ以外は0とし、その数値とそのカードのウェイトをかける
 				double result = (double) new Evaluation(supposingArff).evaluateModelOnce(MODEL, supposingArff.firstInstance());

@@ -62,6 +62,15 @@ public class PastPlayer implements Cloneable{
 	}
 
 	/**
+	 * 手札の最後のカードを取得
+	 * @return カード
+	 */
+	public Card last() {
+		int idx = this.hand.getCount() - 1;
+		return this.cardAtOrDefault(idx);
+	}
+
+	/**
 	 * 手札の何番目かを取得
 	 * @param hand 何番目か
 	 * @return カード
@@ -76,14 +85,19 @@ public class PastPlayer implements Cloneable{
 
 	/**
 	 * カード名から列挙型を解析し、追加
+	 * 空白、または解析に失敗したら無視。
 	 * @param index 位置
 	 * @param card カード名
 	 */
-	public void parseAndAdd(String card) {
-		Card parsed = Topse31044Utils.isNullOrWhiteSpace(card) ?
-				null : Card.valueOf(card);
+	public void addOrAbort(String card) {
+		if (Topse31044Utils.isNullOrWhiteSpace(card)) {
+			return;
+		}
 
-		this.hand.add(parsed);
+		try {
+			this.hand.add(Card.valueOf(card));
+		} finally {
+		}
 	}
 
 	/**
@@ -130,7 +144,6 @@ public class PastPlayer implements Cloneable{
 
 		return arr;
 	}
-
 
 	public boolean isBust() {
 		return this.hand.eval() > 21;
