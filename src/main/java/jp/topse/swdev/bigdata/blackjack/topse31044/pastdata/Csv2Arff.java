@@ -55,8 +55,8 @@ public class Csv2Arff {
 					elm -> PastGame.parse(elm));
 			List<PastGame> pastGames  = rawList.collect(Collectors.toList());
 
-			// 高速化のための間引き
-			pastGames = pastGames.subList(0, 4000);
+//			// 高速化のための間引き
+//			pastGames = pastGames.subList(0, 4000);
 
 			// =====================
 			//  構造化したものをARFFに変換
@@ -64,7 +64,7 @@ public class Csv2Arff {
 			Instances[] data = new Instances[1];
 			pastGames.forEach(elm ->
 				elm.getPlayerContexts().forEach(elm2 ->
-					data[0] = Csv2Arff.addOrSpawnStandToWinInstances(data[0], elm2))
+					data[0] = Csv2Arff.addOrSpawnIsBustInstances(data[0], elm2))
 			);
 
 			this.arff = data[0];

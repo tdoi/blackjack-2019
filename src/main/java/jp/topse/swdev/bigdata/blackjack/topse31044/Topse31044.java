@@ -100,9 +100,9 @@ public class Topse31044 implements DecisionMaker {
 		// ==================================
 		System.out.println("CSVをARFFへ返還");
 		Csv2Arff arff = new Csv2Arff();
-		arff.parse("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\data\\2019.csv");
+		arff.parse("H:\\git\\blackjack-2019\\data\\2019.csv");
 		System.out.println("CSV解析OK");
-		arff.save("C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\pastdata\\topse31044_2019_stand_to_win.arff");
+		arff.save("H:\\git\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\pastdata\\topse31044_2019_hit_to_bust.arff");
 		System.out.println("CSVをARFFへ返還OK");
 
 		// ==================================
@@ -111,13 +111,13 @@ public class Topse31044 implements DecisionMaker {
 		System.out.println("ARFFをモデルへ返還");
 		long time = System.currentTimeMillis();
 		Arff2Model model = new Arff2Model(Models.J_48);
-		model.build(arff.getArff(), true);
+		model.build(arff.getArff());
 		System.out.println(System.currentTimeMillis() - time + "ms");
 		System.out.println("モデルのビルドOK");
-		model.toVisual();
+//		model.toVisual();
 
-//		model.save("H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/past/topse31044_2019.model");
-//		System.out.println("ARFFをモデルへ返還OK");
+		model.save("H:\\git\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\pastdata\\topse31044_2019_hit_to_bust.model");
+		System.out.println("ARFFをモデルへ返還OK");
 
 	}
 
