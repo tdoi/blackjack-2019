@@ -1,6 +1,7 @@
 package jp.topse.swdev.bigdata.blackjack.topse31044.pastdata;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -46,13 +47,33 @@ public class PlayerContext implements Cloneable{
 
 	public PlayerContext(Player player, Game pg) {
 		this.player = PastPlayer.convert(player, pg);
+
+		// ディーラーの1枚目
+		this.dealerFirst = pg.getUpCard();
+
 		this.publicInfo = new ArrayList<>();
 
-		this.publicInfo.add(pg.getUpCard());
+		boolean[] afterFromMe = {false};
 
-		pg.getPlayerHands().values().forEach(elm -> {
-			this.publicInfo.add(elm.get(0));
-		});
+
+		for(String name : new String[] {"Aice", "Bob", "Charlie", "Dave"}) {
+
+		}
+		Arrays.asList().stream()
+			.map(elm -> PastPlayer.convert(player, pg))
+			.forEach(elm -> {
+				// 自分より後のプレイヤーは最初の1枚だけ
+				if (afterFromMe[0]) {
+					this.publicInfo.add(elm.first());
+					return;
+				}
+
+				// 自分より前のプレイヤーは全てみれる。
+				if (this.player.getName() == elm.getName()) {
+					afterFromMe[0] = true;
+				}
+				elm.getCards().forEach(this.publicInfo::add);
+			});
 	}
 
 	/**

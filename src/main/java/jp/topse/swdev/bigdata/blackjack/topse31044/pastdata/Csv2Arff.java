@@ -23,10 +23,10 @@ import weka.core.converters.ArffSaver;
  */
 public class Csv2Arff {
 
-	private final static String[] RESULT_TYPES = {
+	public final static String[] RESULT_TYPES = {
 			Type.LOSE.name(), Type.DRAW.name(), Type.WIN.name()};
 
-	private final static String[] CARDS = {
+	public final static String[] CARDS = {
 			Card.ACE.name(), Card.TWO.name(), Card.THREE.name(),
 			Card.FOUR.name(), Card.FIVE.name(), Card.SIX.name(),
 			Card.SEVEN.name(), Card.EIGHT.name(), Card.NINE.name(),
@@ -34,7 +34,7 @@ public class Csv2Arff {
 			Card.KING.name()};
 
 
-	private final static String[] BUSTING_STATES = {
+	public final static String[] BUSTING_STATES = {
 			Boolean.FALSE.toString(), Boolean.TRUE.toString()};
 
 	/** ARFFデータ */
@@ -64,7 +64,7 @@ public class Csv2Arff {
 			Instances[] data = new Instances[1];
 			pastGames.forEach(elm ->
 				elm.getPlayerContexts().forEach(elm2 ->
-					data[0] = Csv2Arff.addOrSpawnIsBustInstances(data[0], elm2))
+					data[0] = Csv2Arff.addOrSpawnHitToBustInstances(data[0], elm2))
 			);
 
 			this.arff = data[0];
@@ -154,7 +154,7 @@ public class Csv2Arff {
 	 * @param pc
 	 * @return
 	 */
-	public static Instances addOrSpawnIsBustInstances(Instances arg, PlayerContext pc) {
+	public static Instances addOrSpawnHitToBustInstances(Instances arg, PlayerContext pc) {
 		Instances data = arg;
 
 		// ================================
@@ -285,7 +285,8 @@ public class Csv2Arff {
 		// ●自分の手札
 		// 5枚以上では必ずスタンドするので、学習対象から外す。
 		int cnt = pc.getPlayer().getTefuda().getCount();
-		if(cnt >= 5) return data;
+		if(cnt >= 5) 
+			return data;
 
 		values.add(pc.getPlayerCardIndex(0));
 		values.add(pc.getPlayerCardIndex(1));

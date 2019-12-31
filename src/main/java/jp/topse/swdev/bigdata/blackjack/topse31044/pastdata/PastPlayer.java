@@ -35,9 +35,11 @@ public class PastPlayer implements Cloneable{
 
 		pp.name = pl.getName();
 
-		pp.hand = gm.getPlayerHands().get(pl);
+		Hand hnd = gm.getPlayerHands().get(pl);
 
-
+		for (int lp = 0; lp < hnd.getCount(); lp++) {
+			pp.hand.add(hnd.get(lp));
+		}
 		return pp;
 	}
 

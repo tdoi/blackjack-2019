@@ -13,6 +13,7 @@ import jp.topse.swdev.bigdata.blackjack.Result.Type;
 import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Arff2Model;
 import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Arff2Model.Models;
 import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.Csv2Arff;
+import jp.topse.swdev.bigdata.blackjack.topse31044.pastdata.PlayerContext;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Instances;
@@ -31,6 +32,9 @@ public class Topse31044 implements DecisionMaker {
 //			"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
 
 	private static Classifier MODEL;
+
+	private static Classifier STAND_TO_WIN;
+	private static Classifier HIT_TO_BUST;
 
 	public static void main(String[] args) {
 		try {
@@ -141,10 +145,27 @@ public class Topse31044 implements DecisionMaker {
 			return Action.STAND;
 		}
 
+		// 5枚以上ならば必ずスタンド。
+		if (5 <= game.getPlayerHands().get(player).getCount()) {
+			return Action.STAND;
+		}
+
 		// =========================
 		// 12～20が悩みどころ
 		// =========================
-		return this.logic_v1(player, game);
+		try {
+			return this.logic_v2(player, game);
+		} catch (Exception e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+			try {
+				this.logic_v2(player, game);
+			} catch (Exception e1) {
+				// TODO 自動生成された catch ブロック
+				e1.printStackTrace();
+			}
+			return (17 >= currentNum) ? Action.HIT : Action.STAND;
+		}
 	}
 
 	/**
@@ -152,25 +173,56 @@ public class Topse31044 implements DecisionMaker {
 	 * @param player
 	 * @param game
 	 * @return
+	 * @throws Exception
 	 */
-	public Action logic_v2(Player player, Game game) {
-		// ==================================
-		// このまま引かなければ勝てるのかどうか判断
-		// ==================================
-		// 現在の枚数が2枚か、3枚か、4枚かで使うモデルを分ける
-
-		// 勝てるのならばスタンドを返す
-		// 負けるのならば次のロジックへ
-
+	public Action logic_v2(Player player, Game game) throws Exception {
 		// ==================================
 		// 引いてバーストしないか判断
 		// ==================================
-		// 現在の枚数が2枚か、3枚か、4枚かで使うモデルを分ける
+		if (null == Topse31044.HIT_TO_BUST) {
+			Topse31044.HIT_TO_BUST = (Classifier) SerializationHelper.read(
+					getFullPath("topse31044_2019_hit_to_bust.model"));
+		}
 
-		// バーストするならヒットを返す
-		// バーストしないならスタンドを返す
+		PlayerContext context2 = new PlayerContext(player, game);
+		context2.getPlayer().add(Card.ACE);// ダミー
+		Instances predictArff2 =
+				Csv2Arff.addOrSpawnHitToBustInstances(null, context2);
 
-		return null;
+		int resultIndex2 = (int) new Evaluation(predictArff2)
+				.evaluateModelOnce(HIT_TO_BUST, predictArff2.firstInstance());
+		String result2 = Csv2Arff.BUSTING_STATES[resultIndex2];
+
+		// バーストするならスタンドを返す
+		if (Boolean.parseBoolean(result2)) {
+			System.out.println("***HIT-TO-BUST***");
+			return Action.STAND;
+		}
+
+		// 負けるのならば次のロジックへ
+
+		// ==================================
+		// このまま引かなければ勝てるのかどうか判断
+		// ==================================
+		Topse31044.STAND_TO_WIN = (Classifier) SerializationHelper.read(
+				getFullPath("topse31044_2019_stand_to_win.model"));
+
+		PlayerContext context = new PlayerContext(player, game);
+		Instances predictArff =
+				Csv2Arff.addOrSpawnStandToWinInstances(null, context);
+
+		int resultIndex = (int) new Evaluation(predictArff)
+				.evaluateModelOnce(STAND_TO_WIN, predictArff.firstInstance());
+		String result = Csv2Arff.RESULT_TYPES[resultIndex];
+
+		// 勝てるのならばスタンドを返す
+		if (Type.WIN.name().equals(result)) {
+			System.out.println("***STAND-TO-WIN***");
+			return Action.STAND;
+		}
+
+		// バーストしないならヒットを返す
+		return Action.HIT;
 	}
 
 	/**
@@ -183,7 +235,7 @@ public class Topse31044 implements DecisionMaker {
 		if (null == Topse31044.MODEL) {
 			try {
 				Topse31044.MODEL = (Classifier) SerializationHelper.read(
-						"C:\\Program Files\\eclipse\\workspace\\blackjack-2019\\src\\main\\java\\jp\\topse\\swdev\\bigdata\\blackjack\\topse31044\\past\\topse31044_2019.model");
+						getFullPath("topse31044_2019.model"));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -243,6 +295,10 @@ public class Topse31044 implements DecisionMaker {
 		}
 
 		return null;
+	}
+
+	private static String getFullPath(String fileName) {
+		return BASE_PATH + fileName;
 	}
 
 	public void p(String strings) {
