@@ -26,10 +26,11 @@ import weka.core.SerializationHelper;
  */
 public class Topse31044 implements DecisionMaker {
 
-	private static Classifier MODEL;
-	static {
+	private static final String BASE_PATH =
+			"C:/Program Files/eclipse/workspace/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
+//			"C:/Program Files/eclipse/workspace/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
 
-	}
+	private static Classifier MODEL;
 
 	public static void main(String[] args) {
 		try {
