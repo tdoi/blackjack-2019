@@ -38,6 +38,10 @@ public class Game {
         return playerHands.size();
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
     public void setup() {
         if (isInitialized) {
             throw new RuntimeException("Game is already setup.");
