@@ -4,8 +4,8 @@ version '1.0-SNAPSHOT'
 apply plugin: 'java'
 
 apply plugin: 'application'
-mainClassName = 'jp.topse.swdev.bigdata.blackjack.demo.Demo'
-// mainClassName = 'jp.topse.swdev.bigdata.blackjack.Competition'
+// mainClassName = 'jp.topse.swdev.bigdata.blackjack.demo.Demo'
+mainClassName = 'jp.topse.swdev.bigdata.blackjack.Competition'
 
 sourceCompatibility = 8
 
