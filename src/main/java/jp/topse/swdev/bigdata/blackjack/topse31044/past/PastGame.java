@@ -35,11 +35,11 @@ public class PastGame {
 		// ======================================
 	    pg.toadette = new PastPlayer();
 	    pg.toadette.setName(el[0]);
-	    pg.toadette.parseCardNameAt(0, el[1]);
-	    pg.toadette.parseCardNameAt(1, el[2]);
-	    pg.toadette.parseCardNameAt(2, el[3]);
-	    pg.toadette.parseCardNameAt(3, el[4]);
-	    pg.toadette.parseCardNameAt(4, el[5]);
+	    pg.toadette.parseAndAdd(el[1]);
+	    pg.toadette.parseAndAdd(el[2]);
+	    pg.toadette.parseAndAdd(el[3]);
+	    pg.toadette.parseAndAdd(el[4]);
+	    pg.toadette.parseAndAdd(el[5]);
 
 		// ======================================
 		//x プレイヤー
@@ -49,11 +49,11 @@ public class PastGame {
 	    	int offset = 6 + lp * 7;
 	    	PastPlayer pl  = new PastPlayer();
 	    	pl.setName(el[offset]);
-	    	pl.parseCardNameAt(0, el[offset + 1]);
-	    	pl.parseCardNameAt(1, el[offset + 2]);
-	    	pl.parseCardNameAt(2, el[offset + 3]);
-	    	pl.parseCardNameAt(3, el[offset + 4]);
-	    	pl.parseCardNameAt(4, el[offset + 5]);
+	    	pl.parseAndAdd(el[offset + 1]);
+	    	pl.parseAndAdd(el[offset + 2]);
+	    	pl.parseAndAdd(el[offset + 3]);
+	    	pl.parseAndAdd(el[offset + 4]);
+	    	pl.parseAndAdd(el[offset + 5]);
 	    	pl.parseResult(el[offset + 6]);
 	    	bufPl.add(pl);
 	    }

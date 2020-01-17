@@ -3,6 +3,8 @@ package jp.topse.swdev.bigdata.blackjack.topse31044.past;
 
 import java.util.function.Supplier;
 
+import javax.swing.JFrame;
+
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.functions.Logistic;
@@ -12,6 +14,8 @@ import weka.classifiers.trees.J48;
 import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 import weka.core.SerializationHelper;
+import weka.gui.treevisualizer.PlaceNode2;
+import weka.gui.treevisualizer.TreeVisualizer;
 
 /**
  * ARFFを機械学習モデルファイルに変換するためのクラス。
