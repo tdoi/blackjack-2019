@@ -18,7 +18,7 @@ import weka.core.SerializationHelper;
 
 public class Topse31058_OpposeDealer implements DecisionMaker {
 
-    private static final String CLASSIFIER_OPPOSE_DEALER = "./model/OpposeDealer.clfi";
+    private static final String CLASSIFIER_OPPOSE_DEALER = "./models/TopSE31058/OpposeDealer.clfi";
 
     private Classifier m_classifier = null;
 

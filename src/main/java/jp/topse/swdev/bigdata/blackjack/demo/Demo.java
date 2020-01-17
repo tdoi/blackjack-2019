@@ -4,6 +4,8 @@ import jp.topse.swdev.bigdata.blackjack.Deck;
 import jp.topse.swdev.bigdata.blackjack.Game;
 import jp.topse.swdev.bigdata.blackjack.Player;
 import jp.topse.swdev.bigdata.blackjack.Result;
+import jp.topse.swdev.bigdata.blackjack.topse31044.Topse31044;
+import jp.topse.swdev.bigdata.blackjack.topse31058.Topse31058_AvoidBust;
 
 /**
  * Created by doi on 2017/09/28.
@@ -12,10 +14,10 @@ public class Demo {
 
     public static void main(String[] args) {
     	Player[] players = new Player[] {
-				new Player("Aice"),
-				new Player("Bob"),
-				new Player("Charlie"),
-				new Player("Dave"),
+    	        new Player("Alice"),
+                new Player("Bob"),
+				new Player("TopSE31044", new Topse31044()),
+				new Player("TopSE31058", new Topse31058_AvoidBust()),
 		};
 		Demo demo = new Demo(players);
 		demo.eval();
@@ -33,12 +35,7 @@ public class Demo {
     }
 
     private void doOneGame(Player[] players) {
-//        Deck deck = Deck.createDefault();
-//        Deck deck = Deck.createTest1Deck();
-//        Deck deck = Deck.createTest2Deck();
-//        Deck deck = Deck.createTest3Deck();
-//        Deck deck = Deck.createTest4Deck();
-        Deck deck = Deck.createTest5Deck();
+        Deck deck = Deck.createDeck2019();
 
         Game game = new Game(deck);
 

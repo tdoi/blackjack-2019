@@ -27,8 +27,8 @@ import weka.core.SerializationHelper;
  */
 public class Topse31044 implements DecisionMaker {
 
-	private static final String BASE_PATH =
-			"C:/Program Files/eclipse/workspace/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
+	private static final String BASE_PATH = "./models/TopSE31044/pastdata/";
+//			"C:/Program Files/eclipse/workspace/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
 //			"H:/git/blackjack-2019/src/main/java/jp/topse/swdev/bigdata/blackjack/topse31044/pastdata/";
 
 	private static Classifier MODEL;
@@ -195,7 +195,7 @@ public class Topse31044 implements DecisionMaker {
 
 		// バーストするならスタンドを返す
 		if (Boolean.parseBoolean(result2)) {
-			System.out.println("***HIT-TO-BUST***");
+//			System.out.println("***HIT-TO-BUST***");
 			return Action.STAND;
 		}
 
@@ -217,7 +217,7 @@ public class Topse31044 implements DecisionMaker {
 
 		// 勝てるのならばスタンドを返す
 		if (Type.WIN.name().equals(result)) {
-			System.out.println("***STAND-TO-WIN***");
+//			System.out.println("***STAND-TO-WIN***");
 			return Action.STAND;
 		}
 

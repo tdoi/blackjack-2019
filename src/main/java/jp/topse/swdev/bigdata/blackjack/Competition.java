@@ -1,5 +1,8 @@
 package jp.topse.swdev.bigdata.blackjack;
 
+import jp.topse.swdev.bigdata.blackjack.topse31044.Topse31044;
+import jp.topse.swdev.bigdata.blackjack.topse31058.Topse31058_AvoidBust;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +20,7 @@ public class Competition {
     }
 
     public void game() {
-        for (int i = 1; i <= 3; ++i) {
+        for (int i = 1; i <= 1; ++i) {
             game(i);
         }
     }
@@ -27,12 +30,12 @@ public class Competition {
         try {
             logger = new PrintWriter(new BufferedWriter(new FileWriter("./logs/" + index + ".csv", false)));
 
-            Deck deck = Deck.createDefault();
+            Deck deck = Deck.createDeck2019();
             Player[] players = new Player[]{
                 new Player("Alice"),
                 new Player("Bob"),
-                new Player("Charlie"),
-                new Player("David"),
+                new Player("TopSE31044", new Topse31044()),
+                new Player("TopSE31058", new Topse31058_AvoidBust()),
             };
             Map<Player, Integer> pointsMap = eval(players, deck, logger);
             showResult("Game " + index, pointsMap);

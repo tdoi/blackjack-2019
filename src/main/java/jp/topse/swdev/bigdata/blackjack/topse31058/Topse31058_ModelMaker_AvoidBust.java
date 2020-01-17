@@ -19,7 +19,7 @@ public class Topse31058_ModelMaker_AvoidBust {
 
     private static final String INPUT_PATH = "./data/2019.csv";
     private static final String OUTPUT_PATH = "./data/2019.arff";
-    private static final String CLASSIFIER_VOID_BUST = "./model/avoidBust.clfi";
+    private static final String CLASSIFIER_VOID_BUST = "./models/TopSE31058/avoidBust.clfi";
 	
 	public static void main(String[] args) {
         ArrayList<String> actionValues = new ArrayList<String>();

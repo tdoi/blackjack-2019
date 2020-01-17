@@ -130,6 +130,24 @@ public class Deck {
         return new Deck(map);
     }
 
+    public static Deck createDeck2019() {
+        Map<Card, Integer> map = new HashMap<Card, Integer>();
+        map.put(Card.TWO,   16);
+        map.put(Card.THREE, 4);
+        map.put(Card.FOUR,  4);
+        map.put(Card.FIVE,  4);
+        map.put(Card.SIX,   4);
+        map.put(Card.SEVEN, 4);
+        map.put(Card.EIGHT, 1);
+        map.put(Card.NINE,  1);
+        map.put(Card.TEN,   1);
+        map.put(Card.JACK,  1);
+        map.put(Card.QUEEN, 1);
+        map.put(Card.KING,  1);
+        map.put(Card.ACE,   1);
+        return new Deck(map);
+    }
+
     public interface RandomGenerator {
         public int nextInt(int bound);
     }

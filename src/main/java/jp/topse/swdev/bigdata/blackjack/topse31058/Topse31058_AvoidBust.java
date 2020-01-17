@@ -21,7 +21,7 @@ import weka.core.SerializationHelper;
 
 public class Topse31058_AvoidBust implements DecisionMaker {
 	
-    private static final String CLASSIFIER_VOID_BUST = "./model/avoidBust.clfi";
+    private static final String CLASSIFIER_VOID_BUST = "./models/TopSE31058/avoidBust.clfi";
 
     private Classifier m_classifier = null;
 	
